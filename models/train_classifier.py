@@ -1,13 +1,33 @@
 import sys
+import pandas as pd
+from sqlalchemy import create_engine
+import re
+from nltk.tokenize import word_tokenize
+from nltk.stem.wordnet import WordNetLemmatizer
+from nltk.corpus import stopwords
+from sklearn.pipeline import Pipeline
 
 
 def load_data(database_filepath):
-    pass
-
+    engine = create_engine('sqlite:///DisasterResponse.db')
+    df = pd.read_sql_table('categorized_messages', engine)
+    X = df[ ['message'] ].values
+    Y = df.drop([ 'id', 'message', 'original', 'genre' ], axis=1).values
+    return X, Y
+#
 
 def tokenize(text):
-    pass
+    # normalize case and remove punctuation
+    text = re.sub( r"[^a-zA-Z0-9]", " ", text.lower() )
 
+    # tokenize text
+    tokens = word_tokenize(text)
+
+    # lemmatize andremove stop words
+    tokens = [ lemmatizer.lemmatize(t) for t in tokens if t not in stopwords.words("english")  ]
+
+    return tokens
+#
 
 def build_model():
     pass
