@@ -7,6 +7,12 @@ from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import stopwords
 from sklearn.pipeline import Pipeline
 
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.multioutput import MultiOutputClassifier
+from sklearn.linear_model import LogisticRegression
+
+
 
 def load_data(database_filepath):
     engine = create_engine('sqlite:///DisasterResponse.db')
@@ -30,7 +36,13 @@ def tokenize(text):
 #
 
 def build_model():
-    pass
+    # build pipeline
+    pipeline = Pipeline( [
+        ('vect',  CountVectorizer(tokenizer=tokenize) ),
+        ('tfidf', TfidfTransformer()       ),
+        # ('clf',   RandomForestClassifier() )
+        ( 'clf',  MultiOutputClassifier( LogisticRegression() ) )
+    ] )
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
