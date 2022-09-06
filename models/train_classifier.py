@@ -6,6 +6,7 @@ from nltk.tokenize import word_tokenize
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import stopwords
 from sklearn.pipeline import Pipeline
+from sklearn.metrics import classification_report
 
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.ensemble import RandomForestClassifier
@@ -19,7 +20,8 @@ def load_data(database_filepath):
     df = pd.read_sql_table('categorized_messages', engine)
     X = df[ ['message'] ].values
     Y = df.drop([ 'id', 'message', 'original', 'genre' ], axis=1).values
-    return X, Y
+    category_names = df.columns[4:]
+    return X, Y, category_names
 #
 
 def tokenize(text):
@@ -42,10 +44,12 @@ def build_model():
         ('tfidf', TfidfTransformer() ),
         ('clf', MultiOutputClassifier(RandomForestClassifier()) )
     ] )
+    return pipeline
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
-    pass
+    Y_pred = model.predict(X_test)
+    print( classification_report(Y_test, Y_pred, target_names=category_names) )
 
 
 def save_model(model, model_filepath):
