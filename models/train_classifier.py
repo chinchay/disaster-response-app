@@ -39,9 +39,8 @@ def build_model():
     # build pipeline
     pipeline = Pipeline( [
         ('vect',  CountVectorizer(tokenizer=tokenize) ),
-        ('tfidf', TfidfTransformer()       ),
-        # ('clf',   RandomForestClassifier() )
-        ( 'clf',  MultiOutputClassifier( LogisticRegression() ) )
+        ('tfidf', TfidfTransformer() ),
+        ('clf', MultiOutputClassifier(RandomForestClassifier()) )
     ] )
 
 
