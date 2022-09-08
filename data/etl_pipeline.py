@@ -60,7 +60,7 @@ def clean_data(df):
 
 
 def save_data(df, database_filename):
-    engine = create_engine('sqlite:///disasterResponse.db')
+    engine = create_engine('sqlite:///' + database_filename)
     df.to_sql('categorized_messages', engine, index=False)
 
 

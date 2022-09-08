@@ -31,11 +31,12 @@ def tokenize(text):
     return clean_tokens
 
 # load data
-engine = create_engine('sqlite:///../data/YourDatabaseName.db')
-# df = pd.read_sql_table('YourTableName', engine)  #<<<<
+engine = create_engine('sqlite:///../data/DisasterResponse.db')
+df     = pd.read_sql_table('categorized_messages', engine)
 
 # load model
 # model = joblib.load("../models/your_model_name.pkl")  #<<<<
+model = joblib.load("../models/classifier.pkl")
 
 
 
@@ -46,10 +47,10 @@ def index():
     
     # extract data needed for visuals
     # TODO: Below is an example - modify to extract data for your own visuals
-    # genre_counts = df.groupby('genre').count()['message']  #<<<<
-    # genre_names = list(genre_counts.index)  #<<<<
-    genre_counts = [100, 201, 302] #<<<<
-    genre_names = ['one', 'two', 'three'] #<<<<
+    genre_counts = df.groupby('genre').count()['message']  #<<<<
+    genre_names = list(genre_counts.index)  #<<<<
+    # genre_counts = [100, 201, 302] #<<<<
+    # genre_names = ['one', 'two', 'three'] #<<<<
     
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
@@ -89,12 +90,12 @@ def go():
     query = request.args.get('query', '') 
 
     # use model to predict classification for query
-    # classification_labels = model.predict([query])[0]  #<<<<
-    classification_labels = [1.0, 0.09, 0.01]
-    # classification_results = dict(zip(df.columns[4:], classification_labels))  #<<<<
+    classification_labels = model.predict([query])[0]  #<<<<
+    # classification_labels = [1.0, 0.09, 0.01]
+    classification_results = dict(zip(df.columns[4:], classification_labels))  #<<<<
     
-    column4_df = [ "hi_hey1", "hi_oi", "hola_aqui" ]
-    classification_results = dict(  zip( column4_df, classification_labels)  )  #<<<<
+    # column4_df = [ "hi_hey1", "hi_oi", "hola_aqui" ]
+    # classification_results = dict(  zip( column4_df, classification_labels)  )  #<<<<
 
     # This will render the go.html Please see that file. 
     return render_template(

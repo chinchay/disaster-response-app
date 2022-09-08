@@ -3,22 +3,28 @@ import pandas as pd
 from sqlalchemy import create_engine
 import re
 from nltk.tokenize import word_tokenize
+
 from nltk.stem.wordnet import WordNetLemmatizer
+lemmatizer = WordNetLemmatizer()
+
 from nltk.corpus import stopwords
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import classification_report
+from sklearn.model_selection import train_test_split
 
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.linear_model import LogisticRegression
 
+import pickle
+
 
 
 def load_data(database_filepath):
-    engine = create_engine('sqlite:///DisasterResponse.db')
+    engine = create_engine('sqlite:///' + database_filepath)
     df = pd.read_sql_table('categorized_messages', engine)
-    X = df[ ['message'] ].values
+    X = df[ 'message' ].values
     Y = df.drop([ 'id', 'message', 'original', 'genre' ], axis=1).values
     category_names = df.columns[4:]
     return X, Y, category_names
@@ -43,6 +49,7 @@ def build_model():
         ('vect',  CountVectorizer(tokenizer=tokenize) ),
         ('tfidf', TfidfTransformer() ),
         ('clf', MultiOutputClassifier(RandomForestClassifier()) )
+        # ('clf', RandomForestClassifier() )
     ] )
     return pipeline
 
@@ -53,7 +60,9 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 
 def save_model(model, model_filepath):
-    pass
+    with open(model_filepath, 'wb') as f:
+        pickle.dump(model, f)
+    #
 
 
 def main():
@@ -65,12 +74,12 @@ def main():
         
         print('Building model...')
         model = build_model()
-        
+
         print('Training model...')
         model.fit(X_train, Y_train)
         
         print('Evaluating model...')
-        evaluate_model(model, X_test, Y_test, category_names)
+        # evaluate_model(model, X_test, Y_test, category_names)
 
         print('Saving model...\n    MODEL: {}'.format(model_filepath))
         save_model(model, model_filepath)
