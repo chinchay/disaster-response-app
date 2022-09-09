@@ -2,8 +2,10 @@ import json
 import plotly
 import pandas as pd
 
+import re
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
 
 from flask import Flask
 from flask import render_template, request, jsonify
@@ -19,16 +21,31 @@ from sqlalchemy import create_engine
 
 app = Flask(__name__)
 
+lemmatizer = WordNetLemmatizer()
 def tokenize(text):
+    # same tokenize function defined in train_classifier.py:
+
+    # normalize case and remove punctuation
+    text = re.sub( r"[^a-zA-Z0-9]", " ", text.lower() )
+
+    # tokenize text
     tokens = word_tokenize(text)
-    lemmatizer = WordNetLemmatizer()
 
-    clean_tokens = []
-    for tok in tokens:
-        clean_tok = lemmatizer.lemmatize(tok).lower().strip()
-        clean_tokens.append(clean_tok)
+    # lemmatize andremove stop words
+    tokens = [ lemmatizer.lemmatize(t) for t in tokens if t not in stopwords.words("english")  ]
 
-    return clean_tokens
+    return tokens
+#
+    # tokens = word_tokenize(text)
+    # lemmatizer = WordNetLemmatizer()
+
+    # clean_tokens = []
+    # for tok in tokens:
+    #     clean_tok = lemmatizer.lemmatize(tok).lower().strip()
+    #     clean_tokens.append(clean_tok)
+
+    # return clean_tokens
+#
 
 # load data
 engine = create_engine('sqlite:///../data/DisasterResponse.db')
