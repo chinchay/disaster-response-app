@@ -7,14 +7,50 @@ Clone the repo: `git clone https://github.com/chinchay/disaster-response-app.git
 
 ## How to use it
 
+This code is organized in 3 directories:
+* app/
+    * `run.py`
+    * templates/
+        * `go.html`
+        * `master.html`
+* data/
+    * `disaster_messages.csv`
+    * `disaster_categories.csv`
+    * `etl_pipeline.py`
+* models/
+    * `train_classifier.py`
 
 
 ### ETL pipeline
 
+The code provided follows an ETL pipeline to clean and transform the `*.csv` files and load the results into a SQL database `*.db` by entering into the `data/` folder and typing the following:
+
+```ShellSession
+$ python etl_pipeline.py disaster_messages.csv disaster_categories.csv DisasterResponse.db
+```
+
 ### Machine learning model
+
+A machine learning model is saved as a `*.pkl` file to be used later by typing the following:
+
+```ShellSession
+$ cd ../models/
+$ python train_classifier.py "../data/DisasterResponse.db" classifier.pkl
+```
 
 ### Deployment
 
+The `*.pkl` file created in the previous step is loaded by the application:
+
+```ShellSession
+$ python run.py
+```
+
+The model is working and ready for visualization on `http://127.0.0.1:3000` in your local machine.
+
+
+![](imgs/app.png)
+**Fig 1**. App screenshot. The "We are thirsty" tweet is channeled to the appropriate aid organization.
 
 ## Copyright and license
 Code released under the MIT License
