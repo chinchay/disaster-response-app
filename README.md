@@ -1,6 +1,6 @@
 # Disaster response app
 
-The present code presents an ETL and machine learning pipeline to categorize responses during a disaster. The dataset was provided by Figure Eight (now acquired by [Appen](https://appen.com), and contains pre-labeled tweets and text messages from real life disasters. This code cleans and reorganize the dataset to build a machine learning model. The model is able to tag a tweet or message with an appropriate response organization to help during an on-going disaster. During such threatening events, help organizations lacks the required capacity to filter the millions of tweets to focus on the real important ones. The machine learning model provided here can speed up the work on delivering medical supplies, water, or attending blocked roads.
+The present code uses an ETL and machine learning pipeline to categorize responses during a disaster. The dataset was provided by Figure Eight (now acquired by [Appen](https://appen.com) and contains pre-labeled tweets and text messages from real-life disasters. This code cleans and reorganizes the dataset to build a machine learning model. The model can tag a tweet or message with an appropriate response organization to help during an ongoing disaster. During such threatening events, help organizations lack the required capacity to filter the millions of tweets to focus on the real important ones. The machine learning model provided here can speed up the work of delivering medical supplies, and water, or attending to blocked roads.
 
 ## Quick start
 Clone the repo: `git clone https://github.com/chinchay/disaster-response-app.git`
@@ -23,22 +23,22 @@ This code is organized in 3 directories:
 
 ### ETL pipeline
 
-The code provided follows an ETL pipeline to clean and transform the `*.csv` files and load the results into a SQL database `*.db` by entering into the `data/` folder and typing the following:
+The code provided follows an ETL pipeline. The pipeline loads the `*.csv` datasets, merge and cleans them, and stores the result information in an SQLite database `*.db`. To start the process, the user needs to enter into the `data/` folder and type the following:
 
 ```ShellSession
 $ python etl_pipeline.py disaster_messages.csv disaster_categories.csv DisasterResponse.db
 ```
 
-### Machine learning model
+### Machine learning pipeline
 
-A machine learning model is saved as a `*.pkl` file to be used later by typing the following:
+A machine learning pipeline loads the SQLite dataset, splits it into training and test sets, builds a machine learning model to process the text and train on it using GridSearchCV, and outputs the result on the test set. The `run.py` script exports the model as a pickle file `*.pkl`. The job is initiated by typing the following:
 
 ```ShellSession
 $ cd ../models/
 $ python train_classifier.py "../data/DisasterResponse.db" classifier.pkl
 ```
 
-### Deployment
+### Flask Web App
 
 The `*.pkl` file created in the previous step is loaded by the application:
 
